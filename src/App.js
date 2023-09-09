@@ -3,8 +3,8 @@ import InputMask from "react-input-mask";
 import "./App.css";
 
 function App() {
-  // let controller = new AbortController();
-  // let isRequestPending = false;
+  let controller = new AbortController();
+  let isRequestPending = false;
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [results, setResults] = useState([]);
@@ -40,12 +40,12 @@ function App() {
       return;
     }
 
-    // if (isRequestPending) {
-    //   controller.abort();
-    //   controller = new AbortController();
-    // }
+    if (isRequestPending) {
+      controller.abort();
+      controller = new AbortController();
+    }
 
-    // isRequestPending = true;
+    isRequestPending = true;
 
     const sentNumber = number.replace(/-/g, "");
     console.log("Sending data:", { email, sentNumber });
@@ -58,12 +58,12 @@ function App() {
         },
 
         body: JSON.stringify({ email, number: sentNumber }),
-        // signal: controller.signal,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error(errorData.error); // Log the error or display to the user
+        console.error(errorData.error);
         return;
       }
 
@@ -76,10 +76,9 @@ function App() {
       } else {
         console.error("Error occurred:", error);
       }
+    } finally {
+      isRequestPending = false;
     }
-    // } finally {
-    //   isRequestPending = false;
-    // }
   };
 
   return (

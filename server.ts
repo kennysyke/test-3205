@@ -56,7 +56,6 @@ app.post("/search", async (req: Request, res: Response) => {
   const results = data.filter(
     (item) => item.email === email && (!number || item.number === number)
   );
-
   res.json(results);
 });
 
